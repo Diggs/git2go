@@ -58,6 +58,20 @@ func NewCredSshKey(username string, publickey string, privatekey string, passphr
 	return int(ret), cred
 }
 
+func NewCredSshKeyMemory(username string, publickey string, privatekey string, passphrase string) (int, Cred) {
+	cred := Cred{}
+	cusername := C.CString(username)
+	defer C.free(unsafe.Pointer(cusername))
+	cpublickey := C.CString(publickey)
+	defer C.free(unsafe.Pointer(cpublickey))
+	cprivatekey := C.CString(privatekey)
+	defer C.free(unsafe.Pointer(cprivatekey))
+	cpassphrase := C.CString(passphrase)
+	defer C.free(unsafe.Pointer(cpassphrase))
+	ret := C.git_cred_ssh_key_memory_new(&cred.ptr, cusername, cpublickey, cprivatekey, cpassphrase)
+	return int(ret), cred
+}
+
 func NewCredSshKeyFromAgent(username string) (int, Cred) {
 	cred := Cred{}
 	cusername := C.CString(username)
